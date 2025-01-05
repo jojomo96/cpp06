@@ -33,7 +33,6 @@ class ScalarConverter {
 
 	static void handleChar(const std::string &input);
 
-public:
 	ScalarConverter();
 
 	~ScalarConverter();
@@ -41,6 +40,7 @@ public:
 	ScalarConverter(const ScalarConverter &other);
 
 	ScalarConverter &operator=(const ScalarConverter &other);
+public:
 
 	static void handlePsuedoFloat(const std::string &input);
 
