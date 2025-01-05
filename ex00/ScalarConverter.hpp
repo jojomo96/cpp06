@@ -7,6 +7,8 @@ class ScalarConverter {
 		FLOAT,
 		DOUBLE,
 		CHAR,
+		PSEUDO_FLOAT,
+		PSEUDO_DOUBLE,
 		IMPOSSIBLE
 	};
 
@@ -39,6 +41,10 @@ public:
 	ScalarConverter(const ScalarConverter &other);
 
 	ScalarConverter &operator=(const ScalarConverter &other);
+
+	static void handlePsuedoFloat(const std::string &input);
+
+	static void handlePsuedoDouble(const std::string &input);
 
 	static void convert(const std::string &input);
 };

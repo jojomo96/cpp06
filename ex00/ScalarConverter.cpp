@@ -16,14 +16,20 @@ ScalarConverter::Type ScalarConverter::determineType(const std::string &input) {
 	if (std::regex_match(input, intRegex)) {
 		return Type::INT;
 	}
-	if (std::regex_match(input, floatRegex) || std::regex_match(input, pseudoFloatRegex)) {
+	if (std::regex_match(input, floatRegex)) {
 		return Type::FLOAT;
 	}
-	if (std::regex_match(input, doubleRegex) || std::regex_match(input, pseudoDoubleRegex)) {
+	if (std::regex_match(input, doubleRegex)) {
 		return Type::DOUBLE;
 	}
 	if (std::regex_match(input, charRegex) && std::isprint(input[0])) {
 		return Type::CHAR;
+	}
+	if (std::regex_match(input, pseudoFloatRegex)) {
+		return Type::PSEUDO_FLOAT;
+	}
+	if (std::regex_match(input, pseudoDoubleRegex)) {
+		return Type::PSEUDO_DOUBLE;
 	}
 	return Type::IMPOSSIBLE;
 }
@@ -35,6 +41,20 @@ ScalarConverter::~ScalarConverter() = default;
 ScalarConverter::ScalarConverter(const ScalarConverter &other) = default;
 
 ScalarConverter &ScalarConverter::operator=(const ScalarConverter &other) = default;
+
+void ScalarConverter::handlePsuedoFloat(const std::string &input) {
+	std::cout << "float: " << input << std::endl;
+	std::cout << "double: " << input.substr(0, input.size() - 1) << std::endl;
+	std::cout << "int: impossible" << std::endl;
+	std::cout << "char: impossible" << std::endl;
+}
+
+void ScalarConverter::handlePsuedoDouble(const std::string &input) {
+	std::cout << "double: " << input << std::endl;
+	std::cout << "float: " << input << "f" << std::endl;
+	std::cout << "int: impossible" << std::endl;
+	std::cout << "char: impossible" << std::endl;
+}
 
 void ScalarConverter::handleInt(const std::string &input) {
 	try {
@@ -162,6 +182,12 @@ void ScalarConverter::convert(const std::string &input) {
 			break;
 		case Type::CHAR:
 			handleChar(input);
+			break;
+		case Type::PSEUDO_FLOAT:
+			handlePsuedoFloat(input);
+			break;
+		case Type::PSEUDO_DOUBLE:
+			handlePsuedoDouble(input);
 			break;
 		case Type::IMPOSSIBLE:
 			printImpossible();
