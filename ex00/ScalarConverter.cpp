@@ -13,11 +13,9 @@ const std::regex ScalarConverter::pseudoDoubleRegex(R"(^[-+]?inf|nan$)");
 
 ScalarConverter::Type ScalarConverter::determineType(const std::string &input) {
 	if (std::regex_match(input, intRegex)) return Type::INT;
-	if (std::regex_match(input, floatRegex)) return Type::FLOAT;
-	if (std::regex_match(input, doubleRegex)) return Type::DOUBLE;
+	if (std::regex_match(input, floatRegex) || std::regex_match(input, pseudoFloatRegex)) return Type::FLOAT;
+	if (std::regex_match(input, doubleRegex) || std::regex_match(input, pseudoDoubleRegex)) return Type::DOUBLE;
 	if (std::regex_match(input, charRegex) && std::isprint(input[0])) return Type::CHAR;
-	if (std::regex_match(input, pseudoFloatRegex)) return Type::PSEUDO_FLOAT;
-	if (std::regex_match(input, pseudoDoubleRegex)) return Type::PSEUDO_DOUBLE;
 	return Type::IMPOSSIBLE;
 }
 
@@ -28,27 +26,11 @@ void ScalarConverter::convert(const std::string &input) {
 			case Type::FLOAT: handleType(std::stof(input)); break;
 			case Type::DOUBLE: handleType(std::stod(input)); break;
 			case Type::CHAR: handleType(input[0]); break;
-			case Type::PSEUDO_FLOAT: handlePseudoFloat(input); break;
-			case Type::PSEUDO_DOUBLE: handlePseudoDouble(input); break;
 			case Type::IMPOSSIBLE: printImpossible(); break;
 		}
 	} catch ([[maybe_unused]] const std::exception &e) {
 		printImpossible();
 	}
-}
-
-void ScalarConverter::handlePseudoFloat(const std::string &input) {
-	std::cout << "float: " << input << std::endl;
-	std::cout << "double: " << input.substr(0, input.size() - 1) << std::endl;
-	std::cout << "int: impossible" << std::endl;
-	std::cout << "char: impossible" << std::endl;
-}
-
-void ScalarConverter::handlePseudoDouble(const std::string &input) {
-	std::cout << "double: " << input << std::endl;
-	std::cout << "float: " << input << "f" << std::endl;
-	std::cout << "int: impossible" << std::endl;
-	std::cout << "char: impossible" << std::endl;
 }
 
 void ScalarConverter::printImpossible() {

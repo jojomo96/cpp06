@@ -10,8 +10,6 @@ class ScalarConverter {
 		FLOAT,
 		DOUBLE,
 		CHAR,
-		PSEUDO_FLOAT,
-		PSEUDO_DOUBLE,
 		IMPOSSIBLE
 	};
 
@@ -25,10 +23,6 @@ class ScalarConverter {
 	static Type determineType(const std::string &input);
 
 	static void printImpossible();
-
-	static void handlePseudoFloat(const std::string &input);
-
-	static void handlePseudoDouble(const std::string &input);
 
 	ScalarConverter();
 
@@ -95,7 +89,11 @@ void ScalarConverter::handleInt(T value) {
 
 template<typename T, typename FP>
 void ScalarConverter::handleFloating(T value, const char *label, const char *suffix) {
-	if (inRange<T, FP>(value)) {
+	if (std::isinf(value)) {
+		std::cout << label << ": " << (value > 0 ? "+inf" : "-inf") << suffix << std::endl;
+	} else if (std::isnan(value)) {
+		std::cout << label << ": nan" << suffix << std::endl;
+	} else if (inRange<T, FP>(value)) {
 		auto floatVal = static_cast<FP>(value);
 		std::cout << label << ": " << formatFloatingNumber(floatVal, suffix) << std::endl;
 	} else {
@@ -119,6 +117,8 @@ void ScalarConverter::handleChar(T value) {
 
 template<typename T>
 void ScalarConverter::handleType(T value) {
+	std::cout << "Input: " << value << std::endl;
+
 	handleChar(value);
 	handleInt(value);
 	handleFloating<T, float>(value, "float", "f");
