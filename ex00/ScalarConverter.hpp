@@ -80,10 +80,8 @@ void ScalarConverter::handleChar(T value) {
 
 template<typename T, typename FP>
 void ScalarConverter::handleFloating(T value, const char *label, const char *suffix) {
-	if (std::isinf(value)) {
-		std::cout << label << ": " << (value > 0 ? "+inf" : "-inf") << suffix << std::endl;
-	} else if (std::isnan(value)) {
-		std::cout << label << ": nan" << suffix << std::endl;
+	if (std::isinf(value) || std::isnan(value)) {
+		std::cout << label << ": " << value << suffix << std::endl;
 	} else if (inRange<T, FP>(value)) {
 		auto floatVal = static_cast<FP>(value);
 		std::cout << label << ": " << formatFloatingNumber(floatVal, suffix) << std::endl;
