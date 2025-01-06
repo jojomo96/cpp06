@@ -19,14 +19,16 @@ class ScalarConverter {
 	static const std::regex floatRegex;
 	static const std::regex doubleRegex;
 	static const std::regex charRegex;
-
 	static const std::regex pseudoFloatRegex;
-
 	static const std::regex pseudoDoubleRegex;
 
 	static Type determineType(const std::string &input);
 
 	static void printImpossible();
+
+	static void handlePseudoFloat(const std::string &input);
+
+	static void handlePseudoDouble(const std::string &input);
 
 	ScalarConverter();
 
@@ -36,19 +38,38 @@ class ScalarConverter {
 
 	ScalarConverter &operator=(const ScalarConverter &other);
 
-	template <typename T>
+	template<class T, class FP>
+	static void handleFloating(T value, const char *label, const char *suffix = "");
+
+	template<class T>
+	static void handleChar(T value);
+
+	template<typename T>
 	static void handleType(T value);
+
+	template<class From, class To>
+	static bool inRange(From val);
+
+	template<typename FloatT>
+	static std::string formatFloatingNumber(FloatT value, const char *suffix = "");
+
+	template<class T>
+	static void handleInt(T value);
+
 public:
-
-	static void handlePseudoFloat(const std::string &input);
-
-	static void handlePseudoDouble(const std::string &input);
-
 	static void convert(const std::string &input);
 };
 
-template <typename FloatT>
-std::string formatFloatingNumber(FloatT value, const char* suffix = "") {
+template<typename From, typename To>
+bool ScalarConverter::inRange(From val) {
+	const auto lval = static_cast<long double>(val);
+	const auto min = static_cast<long double>(std::numeric_limits<To>::lowest());
+	const auto max = static_cast<long double>(std::numeric_limits<To>::max());
+	return lval >= min && lval <= max;
+}
+
+template<typename FloatT>
+std::string ScalarConverter::formatFloatingNumber(FloatT value, const char *suffix) {
 	FloatT intPart;
 	if (std::modf(value, &intPart) == 0.0) {
 		// No fractional part
@@ -62,17 +83,8 @@ std::string formatFloatingNumber(FloatT value, const char* suffix = "") {
 	return oss.str();
 }
 
-template <typename From, typename To>
-bool inRange(From val)
-{
-	const auto lval = static_cast<long double>(val);
-	const auto min  = static_cast<long double>(std::numeric_limits<To>::lowest());
-	const auto max  = static_cast<long double>(std::numeric_limits<To>::max());
-	return lval >= min && lval <= max;
-}
-
 template<typename T>
-void handleInt(T value) {
+void ScalarConverter::handleInt(T value) {
 	if (inRange<T, int>(value)) {
 		const int intValue = static_cast<int>(value);
 		std::cout << "int: " << intValue << std::endl;
@@ -81,25 +93,18 @@ void handleInt(T value) {
 	}
 }
 
-template<typename T>
-void handleFloat(T value) {
-	if (inRange<T, float>(value))
-	{
-		const auto floatValue = static_cast<float>(value);
-		std::cout << "float: " << formatFloatingNumber(floatValue, "f") << std::endl;
+template<typename T, typename FP>
+void ScalarConverter::handleFloating(T value, const char *label, const char *suffix) {
+	if (inRange<T, FP>(value)) {
+		auto floatVal = static_cast<FP>(value);
+		std::cout << label << ": " << formatFloatingNumber(floatVal, suffix) << std::endl;
 	} else {
-		std::cout << "float: impossible" << std::endl;
+		std::cout << label << ": impossible" << std::endl;
 	}
 }
 
 template<typename T>
-void handleDouble(T value) {
-	const auto doubleValue = static_cast<double>(value);
-	std::cout << "double: " << formatFloatingNumber(doubleValue) << std::endl;
-}
-
-template<typename T>
-void handleChar(T value) {
+void ScalarConverter::handleChar(T value) {
 	if (inRange<T, char>(value)) {
 		if (std::isprint(static_cast<int>(value))) {
 			const char charValue = static_cast<char>(value);
@@ -116,6 +121,6 @@ template<typename T>
 void ScalarConverter::handleType(T value) {
 	handleChar(value);
 	handleInt(value);
-	handleFloat(value);
-	handleDouble(value);
+	handleFloating<T, float>(value, "float", "f");
+	handleFloating<T, double>(value, "double");
 }
