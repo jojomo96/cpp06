@@ -1,6 +1,6 @@
 CXX = c++
 
-NAME = cpp_06
+NAME = convert
 CXXFLAGS = -Wall -Wextra -Werror -std=c++17
 SRCS = $(wildcard *.cpp)
 OBJS = $(patsubst %.cpp,obj/%.o,$(SRCS))

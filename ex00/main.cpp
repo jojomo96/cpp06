@@ -1,10 +1,7 @@
-
 #include <iostream>
-
 #include "ScalarConverter.hpp"
 
 void testScalarConverter() {
-
 	std::cout << "Test 1: Input '42'" << std::endl;
 	ScalarConverter::convert("42");
 
@@ -53,7 +50,11 @@ void testScalarConverter() {
 	ScalarConverter::convert("12345678901234567890");
 }
 
-int main() {
-	testScalarConverter();
+int main(int argc, char* argv[]) {
+	if (argc == 1) {
+		testScalarConverter();
+	} else {
+		ScalarConverter::convert(argv[1]);
+	}
 	return 0;
 }
