@@ -54,36 +54,25 @@ public:
 	static void convert(const std::string &input);
 };
 
-template<typename From, typename To>
-bool ScalarConverter::inRange(From val) {
-	const auto lval = static_cast<long double>(val);
-	const auto min = static_cast<long double>(std::numeric_limits<To>::lowest());
-	const auto max = static_cast<long double>(std::numeric_limits<To>::max());
-	return lval >= min && lval <= max;
-}
-
-template<typename FloatT>
-std::string ScalarConverter::formatFloatingNumber(FloatT value, const char *suffix) {
-	FloatT intPart;
-	if (std::modf(value, &intPart) == 0.0) {
-		// No fractional part
-		std::ostringstream oss;
-		oss << value << ".0" << suffix;
-		return oss.str();
-	}
-	// There is a fractional part
-	std::ostringstream oss;
-	oss << value << suffix;
-	return oss.str();
+template<typename T>
+void ScalarConverter::handleType(T value) {
+	handleChar(value);
+	handleInt(value);
+	handleFloating<T, float>(value, "float", "f");
+	handleFloating<T, double>(value, "double");
 }
 
 template<typename T>
-void ScalarConverter::handleInt(T value) {
-	if (inRange<T, int>(value)) {
-		const int intValue = static_cast<int>(value);
-		std::cout << "int: " << intValue << std::endl;
+void ScalarConverter::handleChar(T value) {
+	if (inRange<T, char>(value)) {
+		if (std::isprint(static_cast<int>(value))) {
+			const char charValue = static_cast<char>(value);
+			std::cout << "char: '" << charValue << "'" << std::endl;
+		} else {
+			std::cout << "char: Non displayable" << std::endl;
+		}
 	} else {
-		std::cout << "int: impossible" << std::endl;
+		std::cout << "char: impossible" << std::endl;
 	}
 }
 
@@ -102,23 +91,34 @@ void ScalarConverter::handleFloating(T value, const char *label, const char *suf
 }
 
 template<typename T>
-void ScalarConverter::handleChar(T value) {
-	if (inRange<T, char>(value)) {
-		if (std::isprint(static_cast<int>(value))) {
-			const char charValue = static_cast<char>(value);
-			std::cout << "char: '" << charValue << "'" << std::endl;
-		} else {
-			std::cout << "char: Non displayable" << std::endl;
-		}
+void ScalarConverter::handleInt(T value) {
+	if (inRange<T, int>(value)) {
+		const int intValue = static_cast<int>(value);
+		std::cout << "int: " << intValue << std::endl;
 	} else {
-		std::cout << "char: impossible" << std::endl;
+		std::cout << "int: impossible" << std::endl;
 	}
 }
 
-template<typename T>
-void ScalarConverter::handleType(T value) {
-	handleChar(value);
-	handleInt(value);
-	handleFloating<T, float>(value, "float", "f");
-	handleFloating<T, double>(value, "double");
+template<typename FloatT>
+std::string ScalarConverter::formatFloatingNumber(FloatT value, const char *suffix) {
+	FloatT intPart;
+	if (std::modf(value, &intPart) == 0.0) {
+		// No fractional part
+		std::ostringstream oss;
+		oss << value << ".0" << suffix;
+		return oss.str();
+	}
+	// There is a fractional part
+	std::ostringstream oss;
+	oss << value << suffix;
+	return oss.str();
+}
+
+template<typename From, typename To>
+bool ScalarConverter::inRange(From val) {
+	const auto lval = static_cast<long double>(val);
+	const auto min = static_cast<long double>(std::numeric_limits<To>::lowest());
+	const auto max = static_cast<long double>(std::numeric_limits<To>::max());
+	return lval >= min && lval <= max;
 }
