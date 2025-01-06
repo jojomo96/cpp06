@@ -6,13 +6,13 @@
 
 const std::regex ScalarConverter::intRegex(R"(^-?\d+$)");
 const std::regex ScalarConverter::floatRegex(R"(^-?\d+\.(\d*)?f$)");
-const std::regex ScalarConverter::doubleRegex(R"(^-?\d+\.\d+$)");
+const std::regex ScalarConverter::doubleRegex(R"(^-?\d+(\.\d*)?$)");
 const std::regex ScalarConverter::charRegex(R"(^.$)");
 const std::regex ScalarConverter::pseudoFloatRegex(R"(^[-+]?inff|nanf$)");
 const std::regex ScalarConverter::pseudoDoubleRegex(R"(^[-+]?inf|nan$)");
 
 ScalarConverter::Type ScalarConverter::determineType(const std::string &input) {
-	if (std::regex_match(input, intRegex)) return Type::INT;
+	if (std::regex_match(input, intRegex) && checkIntRange(input)) return Type::INT;
 	if (std::regex_match(input, floatRegex) || std::regex_match(input, pseudoFloatRegex)) return Type::FLOAT;
 	if (std::regex_match(input, doubleRegex) || std::regex_match(input, pseudoDoubleRegex)) return Type::DOUBLE;
 	if (std::regex_match(input, charRegex) && std::isprint(input[0])) return Type::CHAR;
@@ -38,4 +38,13 @@ void ScalarConverter::printImpossible() {
 	std::cout << "int: impossible" << std::endl;
 	std::cout << "float: impossible" << std::endl;
 	std::cout << "char: impossible" << std::endl;
+}
+
+bool ScalarConverter::checkIntRange(const std::string &input) {
+	try {
+		std::stoi(input);
+		return true;
+	} catch (...) {
+		return false;
+	}
 }

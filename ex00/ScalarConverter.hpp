@@ -22,6 +22,8 @@ class ScalarConverter {
 
 	static Type determineType(const std::string &input);
 
+	static bool checkIntRange(const std::string &input);
+
 	static void printImpossible();
 
 	template<class T, class FP>
