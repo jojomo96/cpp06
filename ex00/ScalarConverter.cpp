@@ -28,7 +28,7 @@ void ScalarConverter::convert(const std::string &input) {
 			case Type::CHAR: handleType(input[0]); break;
 			case Type::IMPOSSIBLE: printImpossible(); break;
 		}
-	} catch ([[maybe_unused]] const std::exception &e) {
+	} catch (...) {
 		printImpossible();
 	}
 }
