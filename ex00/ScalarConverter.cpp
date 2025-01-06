@@ -5,7 +5,7 @@
 #include <regex>
 
 const std::regex ScalarConverter::intRegex(R"(^-?\d+$)");
-const std::regex ScalarConverter::floatRegex(R"(^-?\d+(\.\d*)?f$)");
+const std::regex ScalarConverter::floatRegex(R"(^-?\d+\.(\d*)?f$)");
 const std::regex ScalarConverter::doubleRegex(R"(^-?\d+\.\d+$)");
 const std::regex ScalarConverter::charRegex(R"(^.$)");
 const std::regex ScalarConverter::pseudoFloatRegex(R"(^[-+]?inff|nanf$)");
