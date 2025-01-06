@@ -39,11 +39,3 @@ void ScalarConverter::printImpossible() {
 	std::cout << "float: impossible" << std::endl;
 	std::cout << "char: impossible" << std::endl;
 }
-
-ScalarConverter::ScalarConverter() = default;
-
-ScalarConverter::~ScalarConverter() = default;
-
-ScalarConverter::ScalarConverter(const ScalarConverter &other) = default;
-
-ScalarConverter &ScalarConverter::operator=(const ScalarConverter &other) = default;

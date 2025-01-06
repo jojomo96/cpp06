@@ -24,14 +24,6 @@ class ScalarConverter {
 
 	static void printImpossible();
 
-	ScalarConverter();
-
-	~ScalarConverter();
-
-	ScalarConverter(const ScalarConverter &other);
-
-	ScalarConverter &operator=(const ScalarConverter &other);
-
 	template<class T, class FP>
 	static void handleFloating(T value, const char *label, const char *suffix = "");
 
@@ -51,6 +43,14 @@ class ScalarConverter {
 	static void handleInt(T value);
 
 public:
+	ScalarConverter() = delete;
+
+	~ScalarConverter() = delete;
+
+	ScalarConverter(const ScalarConverter &other) = delete;
+
+	ScalarConverter &operator=(const ScalarConverter &other) = delete;
+
 	static void convert(const std::string &input);
 };
 
@@ -117,8 +117,6 @@ void ScalarConverter::handleChar(T value) {
 
 template<typename T>
 void ScalarConverter::handleType(T value) {
-	std::cout << "Input: " << value << std::endl;
-
 	handleChar(value);
 	handleInt(value);
 	handleFloating<T, float>(value, "float", "f");
